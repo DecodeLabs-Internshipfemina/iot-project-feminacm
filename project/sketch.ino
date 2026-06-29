@@ -1,21 +1,26 @@
-#include "DHTesp.h"
+const int sensorPin = 34;
+const int relayPin = 2;
 
-const int DHT_PIN = 2;
-DHTesp dhtSensor;
+int threshold = 2000;
 
 void setup() {
   Serial.begin(115200);
-  dhtSensor.setup(DHT_PIN, DHTesp::DHT22);
+  pinMode(relayPin, OUTPUT);
 }
 
 void loop() {
-  TempAndHumidity data = dhtSensor.getTempAndHumidity();
+  int moisture = analogRead(sensorPin);
 
-  Serial.print("Temperature: ");
-  Serial.print(data.temperature);
-  Serial.print(" °C  Humidity: ");
-  Serial.print(data.humidity);
-  Serial.println(" %");
+  Serial.print("Moisture: ");
+  Serial.println(moisture);
 
-  delay(2000);
+  if (moisture < threshold) {
+    digitalWrite(relayPin, HIGH);
+    Serial.println("Pump ON");
+  } else {
+    digitalWrite(relayPin, LOW);
+    Serial.println("Pump OFF");
+  }
+
+  delay(1000);
 }
